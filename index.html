@@ -4,250 +4,635 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LocaDesk — iPhone 定位模拟工具</title>
-  <meta name="description" content="LocaDesk：Mac 上为 iPhone 模拟定位的开发测试工具。地图选点、一键模拟、无线连接、中英双语。" />
+  <meta name="description" content="LocaDesk：Mac 上为 iPhone 模拟定位的开发测试工具。地图选点、一键模拟、USB / Wi‑Fi 连接、中英双语。" />
   <meta property="og:title" content="LocaDesk" />
   <meta property="og:description" content="iPhone 定位模拟工具 for macOS" />
   <meta property="og:image" content="assets/icon.png" />
   <link rel="icon" href="assets/icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@500;700&family=Noto+Sans+SC:wght@500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --sky: #38bdf8;
+      --sky: #5ec8ff;
       --blue: #0e78ff;
-      --deep: #023eb4;
-      --ink: #12161f;
-      --muted: #5b6573;
-      --card: rgba(255,255,255,.78);
-      --line: rgba(255,255,255,.55);
+      --deep: #0246c9;
+      --ink: #0c1220;
+      --muted: #5a6578;
+      --paper: #f3f7ff;
+      --line: rgba(12, 18, 32, 0.08);
     }
+
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: "Noto Sans SC", "DM Sans", system-ui, sans-serif;
       color: var(--ink);
-      background:
-        radial-gradient(900px 500px at 85% -10%, rgba(56,189,248,.35), transparent 60%),
-        radial-gradient(700px 480px at -10% 20%, rgba(14,120,255,.18), transparent 55%),
-        linear-gradient(180deg, #eef6ff 0%, #f7faff 40%, #ffffff 100%);
-      min-height: 100vh;
+      font-family: "Noto Sans SC", "Instrument Sans", sans-serif;
+      background: var(--paper);
+      overflow-x: hidden;
     }
     a { color: inherit; text-decoration: none; }
-    .wrap { width: min(1080px, calc(100% - 40px)); margin: 0 auto; }
-    header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 22px 0 8px;
+    code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.92em;
+      background: rgba(14, 120, 255, 0.08);
+      padding: 0.15em 0.4em;
+      border-radius: 6px;
     }
-    .brand { display: flex; gap: 12px; align-items: center; font-weight: 700; letter-spacing: -.02em; }
-    .brand img { width: 42px; height: 42px; border-radius: 11px; box-shadow: 0 10px 24px rgba(14,120,255,.28); }
-    nav { display: flex; gap: 18px; color: var(--muted); font-size: 14px; font-weight: 500; }
-    nav a:hover { color: var(--blue); }
-    .hero {
-      display: grid;
-      grid-template-columns: 1.05fr .95fr;
-      gap: 36px;
+
+    /* —— Atmosphere —— */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background:
+        radial-gradient(1200px 700px at 70% -10%, rgba(94, 200, 255, 0.45), transparent 55%),
+        radial-gradient(900px 600px at -5% 30%, rgba(14, 120, 255, 0.18), transparent 50%),
+        radial-gradient(700px 500px at 100% 80%, rgba(2, 70, 201, 0.12), transparent 45%),
+        linear-gradient(180deg, #e8f3ff 0%, #f3f7ff 42%, #fafcff 100%);
+    }
+    .sky::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      background-image:
+        radial-gradient(circle at 1px 1px, rgba(14, 120, 255, 0.18) 1px, transparent 0);
+      background-size: 28px 28px;
+      mask-image: linear-gradient(180deg, #000 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .wrap { width: min(1120px, calc(100% - 40px)); margin: 0 auto; }
+
+    /* —— Nav —— */
+    .top {
+      display: flex;
       align-items: center;
-      padding: 48px 0 28px;
+      justify-content: space-between;
+      padding: 20px 0 0;
+      animation: rise 0.7s ease both;
     }
-    .eyebrow {
-      display: inline-flex; gap: 8px; align-items: center;
-      padding: 6px 12px; border-radius: 999px;
-      background: rgba(14,120,255,.08); color: var(--deep);
-      font-size: 12px; font-weight: 700;
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: "Instrument Sans", "Noto Sans SC", sans-serif;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -0.03em;
     }
-    h1 {
-      font-size: clamp(34px, 5vw, 56px);
-      line-height: 1.08;
-      margin: 16px 0 14px;
-      letter-spacing: -.03em;
+    .brand img {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      box-shadow: 0 8px 22px rgba(14, 120, 255, 0.28);
     }
-    .lead { font-size: 17px; line-height: 1.65; color: var(--muted); max-width: 36em; margin: 0 0 24px; }
-    .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+    .top-nav {
+      display: flex;
+      gap: 22px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+    }
+    .top-nav a { transition: color 0.2s ease; }
+    .top-nav a:hover { color: var(--blue); }
+
+    /* —— Hero: one composition, brand first, full-bleed product —— */
+    .hero {
+      position: relative;
+      min-height: calc(100vh - 72px);
+      min-height: calc(100svh - 72px);
+      display: grid;
+      align-content: end;
+      padding: 48px 0 36px;
+    }
+    .hero-copy {
+      position: relative;
+      z-index: 2;
+      max-width: 34rem;
+      padding-bottom: 28px;
+      animation: rise 0.85s 0.08s ease both;
+    }
+    .hero-brand {
+      font-family: "Instrument Sans", "Noto Sans SC", sans-serif;
+      font-size: clamp(52px, 9vw, 88px);
+      font-weight: 700;
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+      margin: 0 0 18px;
+      background: linear-gradient(120deg, var(--deep) 0%, var(--blue) 45%, #1aa0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .hero h1 {
+      margin: 0 0 14px;
+      font-size: clamp(22px, 3.2vw, 30px);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.25;
+      color: var(--ink);
+    }
+    .hero-lead {
+      margin: 0 0 28px;
+      font-size: 16px;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 28em;
+    }
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
     .btn {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      padding: 13px 18px; border-radius: 14px; font-weight: 700; font-size: 14px;
-      transition: transform .15s ease, box-shadow .15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
     }
-    .btn:hover { transform: translateY(-1px); }
+    .btn:hover { transform: translateY(-2px); }
     .btn-primary {
       color: #fff;
-      background: linear-gradient(135deg, var(--sky), var(--blue) 55%, var(--deep));
-      box-shadow: 0 14px 30px rgba(14,120,255,.32);
+      background: linear-gradient(135deg, var(--sky), var(--blue) 52%, var(--deep));
+      box-shadow: 0 16px 36px rgba(14, 120, 255, 0.32);
     }
     .btn-ghost {
       color: var(--ink);
-      background: rgba(255,255,255,.7);
-      border: 1px solid rgba(18,22,31,.08);
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid var(--line);
+      backdrop-filter: blur(10px);
     }
-    .phone {
+
+    .hero-stage {
+      position: absolute;
+      right: -4%;
+      bottom: 0;
+      width: min(52vw, 560px);
+      z-index: 1;
+      animation: floatIn 1.1s 0.15s ease both;
+      pointer-events: none;
+    }
+    .hero-stage::before {
+      content: "";
+      position: absolute;
+      inset: 18% -8% -8% -8%;
+      background: radial-gradient(ellipse at center, rgba(14, 120, 255, 0.35), transparent 68%);
+      filter: blur(28px);
+      z-index: -1;
+    }
+    .hero-frame {
       position: relative;
-      justify-self: end;
-      width: min(320px, 100%);
-      aspect-ratio: 9/19.2;
-      border-radius: 34px;
-      padding: 10px;
-      background: linear-gradient(160deg, #1a2333, #0b1220);
-      box-shadow: 0 40px 80px rgba(8, 30, 80, .28);
+      border-radius: 28px 28px 0 0;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.55);
+      border-bottom: 0;
+      box-shadow: 0 40px 80px rgba(8, 40, 110, 0.22);
+      transform: perspective(1200px) rotateY(-8deg) rotateX(4deg) translateY(12px);
+      transform-origin: bottom right;
+      background: #0b1220;
     }
-    .phone img {
-      width: 100%; height: 100%; object-fit: cover; object-position: top;
-      border-radius: 26px; display: block; background: #0b1220;
+    .hero-frame img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      object-position: top center;
     }
-    .glow {
-      position: absolute; inset: auto -20% -18% -20%; height: 40%;
-      background: radial-gradient(circle, rgba(14,120,255,.35), transparent 70%);
-      filter: blur(18px); z-index: -1;
+    .hero-rings {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      right: 8%;
+      top: 12%;
+      border-radius: 50%;
+      border: 1px solid rgba(14, 120, 255, 0.18);
+      animation: pulse 6s ease-in-out infinite;
+      pointer-events: none;
+      z-index: 0;
     }
-    .stats {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
-      margin: 28px 0 8px;
+    .hero-rings::before,
+    .hero-rings::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(14, 120, 255, 0.12);
     }
-    .stat {
-      padding: 16px; border-radius: 18px; background: var(--card);
-      border: 1px solid var(--line); backdrop-filter: blur(10px);
+    .hero-rings::before { inset: -36px; animation: pulse 6s 0.6s ease-in-out infinite; }
+    .hero-rings::after { inset: -72px; animation: pulse 6s 1.2s ease-in-out infinite; }
+
+    /* —— Sections —— */
+    section {
+      padding: 88px 0 0;
+      animation: rise 0.8s ease both;
     }
-    .stat b { display: block; font-size: 22px; margin-bottom: 4px; }
-    .stat span { color: var(--muted); font-size: 12px; }
-    section { padding: 54px 0 10px; }
-    .section-title { font-size: 28px; letter-spacing: -.02em; margin: 0 0 8px; }
-    .section-sub { color: var(--muted); margin: 0 0 24px; }
-    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-    .card {
-      padding: 20px; border-radius: 22px; background: var(--card);
-      border: 1px solid var(--line); backdrop-filter: blur(12px);
-      box-shadow: 0 18px 40px rgba(20, 50, 100, .06);
+    .section-kicker {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin: 0 0 10px;
     }
-    .card h3 { margin: 0 0 8px; font-size: 17px; }
-    .card p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.6; }
-    .shots { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+    .section-title {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 3.5vw, 36px);
+      letter-spacing: -0.03em;
+      font-weight: 700;
+    }
+    .section-sub {
+      margin: 0 0 36px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+      max-width: 36em;
+    }
+
+    /* Features: list rhythm, not card grid clutter */
+    .features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0 48px;
+      border-top: 1px solid var(--line);
+    }
+    .feature {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 16px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--line);
+    }
+    .feature-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 15px;
+      font-family: "Instrument Sans", sans-serif;
+      background: linear-gradient(145deg, var(--sky), var(--blue) 60%, var(--deep));
+      box-shadow: 0 10px 24px rgba(14, 120, 255, 0.22);
+    }
+    .feature h3 {
+      margin: 2px 0 6px;
+      font-size: 18px;
+      letter-spacing: -0.02em;
+    }
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* Shots: one job — show product */
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
     .shot {
-      border-radius: 24px; overflow: hidden; background: #0b1220;
-      box-shadow: 0 24px 50px rgba(10, 30, 70, .16);
-      border: 1px solid rgba(255,255,255,.35);
+      margin: 0;
+      border-radius: 22px;
+      overflow: hidden;
+      background: #0b1220;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 28px 60px rgba(10, 40, 100, 0.14);
+      transition: transform 0.35s ease;
     }
-    .shot img { width: 100%; display: block; }
+    .shot:hover { transform: translateY(-6px); }
+    .shot img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      object-position: top;
+    }
     .shot figcaption {
-      padding: 12px 14px; background: rgba(255,255,255,.92);
-      font-size: 13px; font-weight: 600; color: var(--muted);
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.94);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
     }
-    .steps { display: grid; gap: 12px; }
+
+    /* Start steps */
+    .steps {
+      display: grid;
+      gap: 0;
+      border-top: 1px solid var(--line);
+    }
     .step {
-      display: grid; grid-template-columns: 42px 1fr; gap: 12px; align-items: start;
-      padding: 16px 18px; border-radius: 18px; background: var(--card); border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 64px 1fr;
+      gap: 18px;
+      padding: 26px 0;
+      border-bottom: 1px solid var(--line);
+      align-items: start;
     }
-    .num {
-      width: 42px; height: 42px; border-radius: 14px; display: grid; place-items: center;
-      color: #fff; font-weight: 700;
-      background: linear-gradient(135deg, var(--sky), var(--blue));
+    .step-num {
+      font-family: "Instrument Sans", sans-serif;
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--blue);
+      line-height: 1;
+      padding-top: 2px;
     }
+    .step b {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
+    }
+    .step p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.65;
+    }
+
+    /* Download band */
+    .download {
+      margin-top: 88px;
+      padding: 48px 40px;
+      border-radius: 28px;
+      color: #fff;
+      background:
+        radial-gradient(600px 280px at 90% 0%, rgba(94, 200, 255, 0.35), transparent 55%),
+        linear-gradient(135deg, #0460ef 0%, #0e78ff 45%, #023eb4 100%);
+      box-shadow: 0 30px 70px rgba(14, 120, 255, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .download h2 {
+      margin: 0 0 8px;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+    .download p {
+      margin: 0;
+      opacity: 0.88;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .download .btn-primary {
+      background: #fff;
+      color: var(--deep);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.15);
+    }
+
     footer {
-      margin-top: 60px; padding: 28px 0 40px; color: var(--muted); font-size: 13px;
-      border-top: 1px solid rgba(18,22,31,.06);
-      display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+      margin-top: 48px;
+      padding: 28px 0 48px;
+      color: var(--muted);
+      font-size: 13px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
     }
-    @media (max-width: 880px) {
-      .hero, .grid, .shots, .stats { grid-template-columns: 1fr; }
-      .phone { justify-self: center; }
-      nav { display: none; }
+    footer a:hover { color: var(--blue); }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(18px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes floatIn {
+      from { opacity: 0; transform: translate(40px, 40px) scale(0.96); }
+      to { opacity: 1; transform: translate(0, 0) scale(1); }
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; transform: scale(1); }
+      50% { opacity: 0.7; transform: scale(1.04); }
+    }
+
+    @media (max-width: 960px) {
+      .hero {
+        min-height: auto;
+        align-content: start;
+        padding-top: 36px;
+      }
+      .hero-stage {
+        position: relative;
+        right: auto;
+        width: min(360px, 100%);
+        margin: 36px auto 0;
+        pointer-events: auto;
+      }
+      .hero-frame {
+        transform: none;
+        border-radius: 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+      }
+      .hero-rings { display: none; }
+      .features, .shots { grid-template-columns: 1fr; }
+      .top-nav { display: none; }
+      .download { padding: 36px 24px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="sky" aria-hidden="true"></div>
+
   <div class="wrap">
-    <header>
-      <div class="brand">
-        <img src="assets/icon.png" alt="LocaDesk" />
+    <header class="top">
+      <a class="brand" href="#">
+        <img src="assets/icon.png" width="40" height="40" alt="" />
         <span>LocaDesk</span>
-      </div>
-      <nav>
+      </a>
+      <nav class="top-nav" aria-label="页面导航">
         <a href="#features">功能</a>
-        <a href="#shots">截图</a>
+        <a href="#shots">预览</a>
         <a href="#start">开始</a>
         <a href="https://github.com/linux503/LocaDesk/releases">下载</a>
       </nav>
     </header>
 
-    <section class="hero">
-      <div>
-        <div class="eyebrow">macOS · iPhone 开发测试</div>
-        <h1>把定位模拟<br/>做得又快又干净</h1>
-        <p class="lead">
-          LocaDesk 是 Mac 端 iPhone 定位模拟工具：搜索城市、地图点选、一键推送到手机，
-          支持 USB / 同一 Wi‑Fi，中英双语。源码不公开，发布包与版本信息在这里更新。
+    <section class="hero" aria-label="LocaDesk 介绍">
+      <div class="hero-rings" aria-hidden="true"></div>
+      <div class="hero-copy">
+        <p class="hero-brand">LocaDesk</p>
+        <h1>把 iPhone 定位模拟，做得又快又干净</h1>
+        <p class="hero-lead">
+          Mac 端开发测试工具：地图选点、一键推送到手机，支持 USB / 同一 Wi‑Fi，中英双语。
         </p>
         <div class="cta">
           <a class="btn btn-primary" id="downloadBtn" href="https://github.com/linux503/LocaDesk/releases/latest">下载最新版</a>
           <a class="btn btn-ghost" href="https://github.com/linux503/LocaDesk">GitHub</a>
         </div>
-        <div class="stats">
-          <div class="stat"><b id="verStat">v1.0.7</b><span>当前版本</span></div>
-          <div class="stat"><b>中 / EN</b><span>默认中文</span></div>
-          <div class="stat"><b>Wi‑Fi</b><span>同网可无线</span></div>
-        </div>
       </div>
-      <div class="phone">
-        <div class="glow"></div>
-        <img src="screenshots/map.jpg" alt="LocaDesk 地图界面" />
+      <div class="hero-stage" aria-hidden="true">
+        <div class="hero-frame">
+          <img src="screenshots/map.jpg" alt="" />
+        </div>
       </div>
     </section>
 
     <section id="features">
+      <p class="section-kicker">Capabilities</p>
       <h2 class="section-title">核心能力</h2>
-      <p class="section-sub">只做定位模拟该做的事，不堆花活。</p>
-      <div class="grid">
-        <article class="card"><h3>地图选点</h3><p>搜索城市 / 地址 / 经纬度，或直接点地图，坐标一目了然。</p></article>
-        <article class="card"><h3>一键模拟</h3><p>开始模拟、更新到此处、恢复真实位置，流程清晰。</p></article>
-        <article class="card"><h3>无线连接</h3><p>USB 信任一次后，同一 Wi‑Fi 可继续使用（需开发者模式）。</p></article>
-        <article class="card"><h3>收藏历史</h3><p>常用地点收藏，最近使用可回看，测试更省事。</p></article>
-        <article class="card"><h3>在线更新</h3><p>设置里检查更新，自动对比官网 version.json。</p></article>
-        <article class="card"><h3>中英界面</h3><p>默认中文，设置一键切换 English。</p></article>
+      <p class="section-sub">只做定位模拟该做的事，流程短、反馈清楚。</p>
+      <div class="features">
+        <article class="feature">
+          <div class="feature-mark">01</div>
+          <div>
+            <h3>地图选点</h3>
+            <p>搜索城市 / 地址 / 经纬度，或直接点地图，坐标一目了然。</p>
+          </div>
+        </article>
+        <article class="feature">
+          <div class="feature-mark">02</div>
+          <div>
+            <h3>一键模拟</h3>
+            <p>开始模拟、更新到此处、恢复真实位置，三步走完。</p>
+          </div>
+        </article>
+        <article class="feature">
+          <div class="feature-mark">03</div>
+          <div>
+            <h3>无线连接</h3>
+            <p>USB 信任一次后，同一 Wi‑Fi 可继续使用（需开发者模式）。</p>
+          </div>
+        </article>
+        <article class="feature">
+          <div class="feature-mark">04</div>
+          <div>
+            <h3>收藏历史</h3>
+            <p>常用地点收藏，最近使用可回看，回归测试更省事。</p>
+          </div>
+        </article>
+        <article class="feature">
+          <div class="feature-mark">05</div>
+          <div>
+            <h3>在线更新</h3>
+            <p>设置里检查更新，自动对比官网 version.json。</p>
+          </div>
+        </article>
+        <article class="feature">
+          <div class="feature-mark">06</div>
+          <div>
+            <h3>中英界面</h3>
+            <p>默认中文，设置一键切换 English。</p>
+          </div>
+        </article>
       </div>
     </section>
 
     <section id="shots">
+      <p class="section-kicker">Preview</p>
       <h2 class="section-title">界面预览</h2>
       <p class="section-sub">窄窗口也能舒服用，接近手机竖屏比例。</p>
       <div class="shots">
-        <figure class="shot"><img src="screenshots/map.jpg" alt="地图" /><figcaption>地图 · 搜索与模拟</figcaption></figure>
-        <figure class="shot"><img src="screenshots/places.jpg" alt="收藏" /><figcaption>收藏 · 历史地点</figcaption></figure>
-        <figure class="shot"><img src="screenshots/settings.jpg" alt="设置" /><figcaption>设置 · 连接与更新</figcaption></figure>
+        <figure class="shot">
+          <img src="screenshots/map.jpg" alt="地图界面" loading="lazy" />
+          <figcaption>地图 · 搜索与模拟</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/places.jpg" alt="收藏界面" loading="lazy" />
+          <figcaption>收藏 · 历史地点</figcaption>
+        </figure>
+        <figure class="shot">
+          <img src="screenshots/settings.jpg" alt="设置界面" loading="lazy" />
+          <figcaption>设置 · 连接与更新</figcaption>
+        </figure>
       </div>
     </section>
 
     <section id="start">
+      <p class="section-kicker">Get started</p>
       <h2 class="section-title">快速开始</h2>
       <p class="section-sub">第一次使用建议按下面顺序走一遍。</p>
       <div class="steps">
-        <div class="step"><div class="num">1</div><div><b>安装工具</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px;">终端执行：<code>pip3 install -U pymobiledevice3</code></p></div></div>
-        <div class="step"><div class="num">2</div><div><b>开启开发者模式</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px;">iPhone：设置 → 隐私与安全性 → 开发者模式（开启后重启确认）。</p></div></div>
-        <div class="step"><div class="num">3</div><div><b>USB 连接并信任</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px;">解锁手机，点「信任此电脑」。需要无线时保持同一 Wi‑Fi，并允许「本地网络」。</p></div></div>
-        <div class="step"><div class="num">4</div><div><b>开始模拟</b><p style="margin:6px 0 0;color:var(--muted);font-size:14px;">打开 LocaDesk → 选点 → 开始模拟位置。退出时可自动恢复真实定位。</p></div></div>
+        <div class="step">
+          <div class="step-num">01</div>
+          <div>
+            <b>安装工具</b>
+            <p>终端执行：<code>pip3 install -U pymobiledevice3</code></p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div>
+            <b>开启开发者模式</b>
+            <p>iPhone：设置 → 隐私与安全性 → 开发者模式（开启后重启确认）。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div>
+            <b>USB 连接并信任</b>
+            <p>解锁手机，点「信任此电脑」。无线使用时保持同一 Wi‑Fi，并允许「本地网络」。</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div>
+            <b>开始模拟</b>
+            <p>打开 LocaDesk → 选点 → 开始模拟位置。退出时可自动恢复真实定位。</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <footer>
-      <div>© LocaDesk · macOS 开发测试工具 · 非 App Store 发布</div>
+    <div class="download">
       <div>
-        <a href="version.json">version.json</a> ·
+        <h2>下载 LocaDesk</h2>
+        <p id="downloadMeta">macOS 14+ · DMG 安装包 · 非 App Store</p>
+      </div>
+      <a class="btn btn-primary" id="downloadBtn2" href="https://github.com/linux503/LocaDesk/releases/latest">获取 DMG</a>
+    </div>
+
+    <footer>
+      <div>© LocaDesk · macOS 开发测试工具</div>
+      <div>
+        <a href="version.json">version.json</a>
+        ·
         <a href="https://github.com/linux503/LocaDesk/releases">Releases</a>
       </div>
     </footer>
   </div>
+
   <script>
     fetch('version.json', { cache: 'no-store' })
-      .then(r => r.json())
-      .then(v => {
-        const btn = document.getElementById('downloadBtn');
-        if (v && v.downloadURL) btn.href = v.downloadURL;
-        if (v && v.version) {
-          btn.textContent = '下载 v' + v.version + ' DMG';
-          const vs = document.getElementById('verStat');
-          if (vs) vs.textContent = 'v' + v.version;
+      .then(function (r) { return r.json(); })
+      .then(function (v) {
+        var label = v && v.version ? ('下载 v' + v.version + ' DMG') : '下载最新版';
+        var btn = document.getElementById('downloadBtn');
+        var btn2 = document.getElementById('downloadBtn2');
+        var meta = document.getElementById('downloadMeta');
+        if (v && v.downloadURL) {
+          if (btn) btn.href = v.downloadURL;
+          if (btn2) btn2.href = v.downloadURL;
+        }
+        if (btn) btn.textContent = label;
+        if (btn2) btn2.textContent = label;
+        if (meta && v && v.version) {
+          meta.textContent = 'v' + v.version + ' · macOS ' + (v.minMacOS || '14+') + ' · DMG · 非 App Store';
         }
       })
-      .catch(() => {});
+      .catch(function () {});
   </script>
 </body>
 </html>
