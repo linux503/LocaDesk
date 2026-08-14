@@ -1,0 +1,11 @@
+{
+  "version": "1.0.6",
+  "build": 8,
+  "minMacOS": "14.0",
+  "publishedAt": "2026-08-15",
+  "notes": "界面美化、全新 Logo、中英双语、无线连接优化、在线更新检查。",
+  "notes_en": "UI polish, new logo, bilingual UI, Wi‑Fi connection fixes, online update check.",
+  "downloadURL": "https://github.com/linux503/LocaDesk/releases/latest/download/LocaDesk-1.0.6.zip",
+  "website": "https://linux503.github.io/LocaDesk/",
+  "homepage": "https://github.com/linux503/LocaDesk"
+}
