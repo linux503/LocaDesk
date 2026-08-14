@@ -3,12 +3,89 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>LocaDesk — iPhone 定位模拟工具</title>
-  <meta name="description" content="LocaDesk：Mac 上为 iPhone 模拟定位的开发测试工具。地图选点、一键模拟、USB / Wi‑Fi 连接、中英双语。" />
-  <meta property="og:title" content="LocaDesk" />
-  <meta property="og:description" content="iPhone 定位模拟工具 for macOS" />
-  <meta property="og:image" content="assets/icon.png" />
-  <link rel="icon" href="assets/icon.png" />
+
+  <!-- Primary SEO -->
+  <title>LocaDesk — macOS 上的 iPhone 定位模拟工具</title>
+  <meta name="description" content="LocaDesk 是面向开发测试的 macOS 应用：在 Mac 上为 iPhone 模拟 GPS 定位。支持地图选点、城市/地址/经纬度搜索、USB 与同一 Wi‑Fi 连接、收藏历史、中英双语，并提供应用内更新。" />
+  <meta name="keywords" content="LocaDesk,iPhone定位模拟,GPS模拟,macOS,开发者模式,pymobiledevice3,无线连接,地图选点,location simulation" />
+  <meta name="author" content="LocaDesk" />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+  <meta name="theme-color" content="#0e78ff" />
+  <meta name="color-scheme" content="light" />
+  <link rel="canonical" href="https://linux503.github.io/LocaDesk/" />
+  <link rel="alternate" hreflang="zh-Hans" href="https://linux503.github.io/LocaDesk/" />
+  <link rel="alternate" hreflang="x-default" href="https://linux503.github.io/LocaDesk/" />
+
+  <!-- Icons -->
+  <link rel="icon" href="https://linux503.github.io/LocaDesk/assets/favicon-32.png" sizes="32x32" type="image/png" />
+  <link rel="icon" href="https://linux503.github.io/LocaDesk/assets/icon.png" sizes="256x256" type="image/png" />
+  <link rel="apple-touch-icon" href="https://linux503.github.io/LocaDesk/assets/apple-touch-icon.png" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="LocaDesk" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta property="og:url" content="https://linux503.github.io/LocaDesk/" />
+  <meta property="og:title" content="LocaDesk — macOS 上的 iPhone 定位模拟工具" />
+  <meta property="og:description" content="地图选点、一键模拟、USB / Wi‑Fi 连接、中英双语。专为 iPhone 开发测试打造的 Mac 端定位模拟工具。" />
+  <meta property="og:image" content="https://linux503.github.io/LocaDesk/assets/og-cover.jpg" />
+  <meta property="og:image:secure_url" content="https://linux503.github.io/LocaDesk/assets/og-cover.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="LocaDesk 应用界面预览：在 Mac 上为 iPhone 模拟定位" />
+
+  <!-- Twitter / X -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LocaDesk — macOS 上的 iPhone 定位模拟工具" />
+  <meta name="twitter:description" content="地图选点、一键模拟、USB / Wi‑Fi 连接、中英双语。专为 iPhone 开发测试打造的 Mac 端定位模拟工具。" />
+  <meta name="twitter:image" content="https://linux503.github.io/LocaDesk/assets/og-cover.jpg" />
+  <meta name="twitter:image:alt" content="LocaDesk 应用界面预览：在 Mac 上为 iPhone 模拟定位" />
+
+  <!-- Structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://linux503.github.io/LocaDesk/#website",
+        "url": "https://linux503.github.io/LocaDesk/",
+        "name": "LocaDesk",
+        "description": "macOS 上的 iPhone 定位模拟工具",
+        "inLanguage": "zh-Hans",
+        "publisher": { "@id": "https://linux503.github.io/LocaDesk/#org" }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://linux503.github.io/LocaDesk/#org",
+        "name": "LocaDesk",
+        "url": "https://linux503.github.io/LocaDesk/",
+        "logo": "https://linux503.github.io/LocaDesk/assets/icon.png"
+      },
+      {
+        "@type": "SoftwareApplication",
+        "@id": "https://linux503.github.io/LocaDesk/#app",
+        "name": "LocaDesk",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS 14.0+",
+        "description": "在 Mac 上为 iPhone 模拟 GPS 定位的开发测试工具，支持地图选点、USB 与 Wi‑Fi 连接、收藏历史与中英双语。",
+        "url": "https://linux503.github.io/LocaDesk/",
+        "image": "https://linux503.github.io/LocaDesk/assets/og-cover.jpg",
+        "downloadUrl": "https://github.com/linux503/LocaDesk/releases/latest",
+        "softwareVersion": "1.0.7",
+        "inLanguage": ["zh-Hans", "en"],
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "publisher": { "@id": "https://linux503.github.io/LocaDesk/#org" }
+      }
+    ]
+  }
+  </script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
