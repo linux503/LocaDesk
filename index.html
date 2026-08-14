@@ -182,7 +182,7 @@
           <a class="btn btn-ghost" href="https://github.com/linux503/LocaDesk">GitHub</a>
         </div>
         <div class="stats">
-          <div class="stat"><b>macOS 14+</b><span>原生 SwiftUI</span></div>
+          <div class="stat"><b id="verStat">v1.0.7</b><span>当前版本</span></div>
           <div class="stat"><b>中 / EN</b><span>默认中文</span></div>
           <div class="stat"><b>Wi‑Fi</b><span>同网可无线</span></div>
         </div>
@@ -241,7 +241,11 @@
       .then(v => {
         const btn = document.getElementById('downloadBtn');
         if (v && v.downloadURL) btn.href = v.downloadURL;
-        if (v && v.version) btn.textContent = '下载 v' + v.version;
+        if (v && v.version) {
+          btn.textContent = '下载 v' + v.version + ' DMG';
+          const vs = document.getElementById('verStat');
+          if (vs) vs.textContent = 'v' + v.version;
+        }
       })
       .catch(() => {});
   </script>

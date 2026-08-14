@@ -8,7 +8,8 @@
 
 ## 下载
 
-- 最新版本：[Releases](https://github.com/linux503/LocaDesk/releases/latest)
+- 最新版本：**v1.0.7** → [Releases](https://github.com/linux503/LocaDesk/releases/latest)
+- 安装包：`LocaDesk-1.0.7.dmg`
 - 官网页面：[https://linux503.github.io/LocaDesk/](https://linux503.github.io/LocaDesk/)
 - 版本清单：[`version.json`](./version.json)（App 内「检查更新」读取此文件）
 
