@@ -250,8 +250,9 @@
       object-fit: cover;
       object-position: center right;
       z-index: 0;
-      transform: scale(1.02);
-      animation: ken 18s ease-in-out infinite alternate;
+      will-change: transform;
+      transform: scale(1.04);
+      transition: transform .1s linear;
     }
     .hero-shade {
       position: absolute;
@@ -260,7 +261,30 @@
       background:
         linear-gradient(90deg, rgba(4, 24, 80, .78) 0%, rgba(4, 30, 100, .42) 42%, rgba(4, 30, 100, .08) 72%),
         linear-gradient(180deg, transparent 55%, rgba(4, 20, 70, .35) 100%);
+      pointer-events: none;
     }
+    .hero-pulse {
+      position: absolute;
+      right: 18%;
+      top: 22%;
+      width: 220px;
+      height: 220px;
+      z-index: 1;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .22);
+      pointer-events: none;
+      animation: radar 5.5s ease-out infinite;
+    }
+    .hero-pulse::before,
+    .hero-pulse::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .16);
+    }
+    .hero-pulse::before { animation: radar 5.5s .9s ease-out infinite; }
+    .hero-pulse::after { animation: radar 5.5s 1.8s ease-out infinite; }
     .hero-copy {
       position: relative;
       z-index: 2;
@@ -275,6 +299,7 @@
       font-weight: 700;
       letter-spacing: -.05em;
       line-height: .92;
+      animation: rise .8s .12s ease both;
     }
     .hero h1 {
       margin: 0 0 14px;
@@ -282,6 +307,7 @@
       font-weight: 700;
       letter-spacing: -.03em;
       line-height: 1.3;
+      animation: rise .8s .22s ease both;
     }
     .hero-lead {
       margin: 0 0 28px;
@@ -289,9 +315,16 @@
       line-height: 1.65;
       color: rgba(255, 255, 255, .82);
       max-width: 28em;
+      animation: rise .8s .32s ease both;
     }
-    .cta { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      animation: rise .8s .42s ease both;
+    }
     .btn {
+      position: relative;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -300,9 +333,19 @@
       border-radius: 12px;
       font-weight: 700;
       font-size: 14px;
+      overflow: hidden;
       transition: transform .2s ease, box-shadow .2s ease;
     }
+    .btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.35) 48%, transparent 66%);
+      transform: translateX(-120%);
+      transition: transform .55s ease;
+    }
     .btn:hover { transform: translateY(-2px); }
+    .btn:hover::after { transform: translateX(120%); }
     .btn-primary {
       color: var(--deep);
       background: #fff;
@@ -346,13 +389,30 @@
       gap: 0 48px;
       border-top: 1px solid var(--line);
     }
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.is-in {
+      opacity: 1;
+      transform: none;
+    }
+    .reveal-delay-1 { transition-delay: .08s; }
+    .reveal-delay-2 { transition-delay: .16s; }
+    .reveal-delay-3 { transition-delay: .24s; }
+
     .feature {
       display: grid;
       grid-template-columns: 52px 1fr;
       gap: 16px;
       padding: 26px 0;
       border-bottom: 1px solid var(--line);
+      transition: transform .25s ease, background .25s ease;
+      border-radius: 14px;
     }
+    .feature:hover { transform: translateX(4px); }
     .feature-mark {
       width: 46px;
       height: 46px;
@@ -365,6 +425,11 @@
       font-family: "Instrument Sans", sans-serif;
       background: linear-gradient(145deg, var(--sky), var(--blue) 58%, var(--deep));
       box-shadow: 0 10px 22px rgba(14, 120, 255, .22);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+    .feature:hover .feature-mark {
+      transform: scale(1.08) rotate(-4deg);
+      box-shadow: 0 14px 28px rgba(14, 120, 255, .34);
     }
     .feature h3 { margin: 2px 0 6px; font-size: 17px; letter-spacing: -.02em; }
     .feature p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
@@ -380,6 +445,16 @@
       border: 1px solid rgba(255, 255, 255, .7);
       box-shadow: 0 28px 70px rgba(10, 40, 110, .1);
       overflow: hidden;
+      --mx: 70%;
+      --my: 30%;
+    }
+    .gallery::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(480px 280px at var(--mx) var(--my), rgba(14, 120, 255, .16), transparent 65%);
+      pointer-events: none;
+      z-index: 0;
     }
     .gallery-fan {
       position: absolute;
@@ -391,6 +466,7 @@
       pointer-events: none;
       transform: rotate(4deg);
       user-select: none;
+      animation: drift 12s ease-in-out infinite alternate;
     }
     .gallery-head {
       position: relative;
@@ -450,10 +526,16 @@
       display: grid;
       place-items: center;
       min-height: 480px;
+      perspective: 1000px;
     }
     .stage-main img {
       width: min(100%, 420px);
       filter: drop-shadow(0 28px 48px rgba(8, 40, 110, .28));
+      transform-style: preserve-3d;
+      transition: transform .18s ease-out;
+      animation: floaty 5.5s ease-in-out infinite;
+    }
+    .stage-main img.is-swap {
       animation: pop .45s ease both;
     }
     .stage-side {
@@ -510,6 +592,12 @@
       gap: 18px;
       padding: 26px 0;
       border-bottom: 1px solid var(--line);
+      transition: background .25s ease, padding-left .25s ease;
+      border-radius: 12px;
+    }
+    .step:hover {
+      background: rgba(14, 120, 255, .04);
+      padding-left: 8px;
     }
     .step-num {
       font-family: "Instrument Sans", sans-serif;
@@ -528,6 +616,8 @@
       padding: 48px 40px;
       border-radius: 28px;
       color: #fff;
+      position: relative;
+      overflow: hidden;
       background:
         radial-gradient(560px 260px at 88% 0%, rgba(106, 208, 255, .35), transparent 55%),
         linear-gradient(135deg, #0460ef 0%, #0e78ff 48%, #023eb4 100%);
@@ -538,12 +628,31 @@
       gap: 24px;
       flex-wrap: wrap;
     }
+    .download::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      right: -40px;
+      top: -60px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,.22);
+      animation: radar 6s ease-out infinite;
+      pointer-events: none;
+    }
     .download h2 { margin: 0 0 8px; font-size: 28px; letter-spacing: -.03em; }
     .download p { margin: 0; opacity: .88; font-size: 14px; line-height: 1.5; }
     .download .btn-primary {
+      position: relative;
+      z-index: 1;
       color: var(--deep);
       background: #fff;
       box-shadow: 0 12px 28px rgba(0, 0, 0, .15);
+    }
+
+    .top.is-scrolled .top-nav {
+      box-shadow: 0 14px 36px rgba(14, 60, 140, 0.14);
+      background: rgba(255, 255, 255, 0.88);
     }
 
     footer {
@@ -570,9 +679,17 @@
       from { opacity: 0; transform: translateY(16px) scale(.97); }
       to { opacity: 1; transform: none; }
     }
-    @keyframes ken {
-      from { transform: scale(1.02) translate3d(0, 0, 0); }
-      to { transform: scale(1.06) translate3d(-1.5%, 1%, 0); }
+    @keyframes floaty {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    @keyframes radar {
+      0% { transform: scale(.55); opacity: .55; }
+      100% { transform: scale(1.45); opacity: 0; }
+    }
+    @keyframes drift {
+      from { transform: rotate(3deg) translateY(0); }
+      to { transform: rotate(6deg) translateY(12px); }
     }
 
     @media (max-width: 960px) {
@@ -581,6 +698,7 @@
       .top-nav .nav-cta { padding: 0 16px; }
       .hero { min-height: 520px; }
       .hero-bg { object-position: 70% center; }
+      .hero-pulse { display: none; }
       .features { grid-template-columns: 1fr; }
       .stage { grid-template-columns: 1fr; }
       .stage-main { min-height: 380px; }
@@ -593,6 +711,7 @@
         animation: none !important;
         transition: none !important;
       }
+      .reveal { opacity: 1; transform: none; }
     }
   </style>
 </head>
@@ -614,8 +733,9 @@
     </header>
 
     <section class="hero" aria-label="LocaDesk 介绍">
-      <img class="hero-bg" src="screenshots/hero-cinematic.jpg" alt="" width="1600" height="980" />
+      <img class="hero-bg" id="heroBg" src="screenshots/hero-cinematic.jpg" alt="" width="1600" height="980" />
       <div class="hero-shade" aria-hidden="true"></div>
+      <div class="hero-pulse" aria-hidden="true"></div>
       <div class="hero-copy">
         <p class="hero-brand">LocaDesk</p>
         <h1>把 iPhone 定位模拟，做得又快又干净</h1>
@@ -629,47 +749,47 @@
       </div>
     </section>
 
-    <section id="features">
+    <section id="features" class="reveal">
       <p class="section-kicker">Capabilities</p>
       <h2 class="section-title">核心能力</h2>
       <p class="section-sub">只做定位模拟该做的事，流程短、反馈清楚。</p>
       <div class="features">
-        <article class="feature">
+        <article class="feature reveal reveal-delay-1">
           <div class="feature-mark">01</div>
           <div>
             <h3>地图选点</h3>
             <p>搜索城市 / 地址 / 经纬度，或直接点地图，坐标一目了然。</p>
           </div>
         </article>
-        <article class="feature">
+        <article class="feature reveal reveal-delay-2">
           <div class="feature-mark">02</div>
           <div>
             <h3>一键模拟</h3>
             <p>开始模拟、更新到此处、恢复真实位置，三步走完。</p>
           </div>
         </article>
-        <article class="feature">
+        <article class="feature reveal reveal-delay-3">
           <div class="feature-mark">03</div>
           <div>
             <h3>无线连接</h3>
             <p>USB 信任一次后，同一 Wi‑Fi 可继续使用（需开发者模式）。</p>
           </div>
         </article>
-        <article class="feature">
+        <article class="feature reveal reveal-delay-1">
           <div class="feature-mark">04</div>
           <div>
             <h3>收藏历史</h3>
             <p>常用地点收藏，最近使用可回看，回归测试更省事。</p>
           </div>
         </article>
-        <article class="feature">
+        <article class="feature reveal reveal-delay-2">
           <div class="feature-mark">05</div>
           <div>
             <h3>在线更新</h3>
             <p>设置里检查更新，自动对比官网 version.json。</p>
           </div>
         </article>
-        <article class="feature">
+        <article class="feature reveal reveal-delay-3">
           <div class="feature-mark">06</div>
           <div>
             <h3>中英界面</h3>
@@ -679,8 +799,8 @@
       </div>
     </section>
 
-    <section id="shots">
-      <div class="gallery">
+    <section id="shots" class="reveal">
+      <div class="gallery" id="gallery">
         <img class="gallery-fan" src="screenshots/gallery-fan.jpg" alt="" width="1400" height="900" aria-hidden="true" />
         <div class="gallery-head">
           <div>
@@ -696,7 +816,7 @@
         </div>
 
         <div class="stage">
-          <div class="stage-main">
+          <div class="stage-main" id="stageMain">
             <img id="stageImage" src="screenshots/map-window.jpg" alt="地图界面" width="520" height="900" />
           </div>
           <div class="stage-side">
@@ -718,33 +838,33 @@
       </div>
     </section>
 
-    <section id="start">
+    <section id="start" class="reveal">
       <p class="section-kicker">Get started</p>
       <h2 class="section-title">快速开始</h2>
       <p class="section-sub">第一次使用建议按下面顺序走一遍。</p>
       <div class="steps">
-        <div class="step">
+        <div class="step reveal reveal-delay-1">
           <div class="step-num">01</div>
           <div>
             <b>安装工具</b>
             <p>终端执行：<code>pip3 install -U pymobiledevice3</code></p>
           </div>
         </div>
-        <div class="step">
+        <div class="step reveal reveal-delay-2">
           <div class="step-num">02</div>
           <div>
             <b>开启开发者模式</b>
             <p>iPhone：设置 → 隐私与安全性 → 开发者模式（开启后重启确认）。</p>
           </div>
         </div>
-        <div class="step">
+        <div class="step reveal reveal-delay-3">
           <div class="step-num">03</div>
           <div>
             <b>USB 连接并信任</b>
             <p>解锁手机，点「信任此电脑」。无线使用时保持同一 Wi‑Fi，并允许「本地网络」。</p>
           </div>
         </div>
-        <div class="step">
+        <div class="step reveal reveal-delay-1">
           <div class="step-num">04</div>
           <div>
             <b>开始模拟</b>
@@ -754,7 +874,7 @@
       </div>
     </section>
 
-    <div class="download">
+    <div class="download reveal">
       <div>
         <h2>下载 LocaDesk</h2>
         <p id="downloadMeta">macOS 14+ · DMG 安装包 · 非 App Store</p>
@@ -774,6 +894,7 @@
 
   <script>
     (function () {
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var shots = {
         map: {
           src: 'screenshots/map-window.jpg',
@@ -797,15 +918,19 @@
       var desc = document.getElementById('stageDesc');
       var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
       var thumbs = Array.prototype.slice.call(document.querySelectorAll('.thumb'));
+      var header = document.querySelector('.top');
+      var heroBg = document.getElementById('heroBg');
+      var gallery = document.getElementById('gallery');
+      var stageMain = document.getElementById('stageMain');
 
       function select(key) {
         var item = shots[key];
         if (!item || !image) return;
-        image.style.animation = 'none';
+        image.classList.remove('is-swap');
         void image.offsetWidth;
         image.src = item.src;
         image.alt = item.title + '界面';
-        image.style.animation = '';
+        image.classList.add('is-swap');
         if (title) title.textContent = item.title;
         if (desc) desc.textContent = item.desc;
         tabs.forEach(function (el) {
@@ -823,6 +948,59 @@
           select(el.getAttribute('data-key'));
         });
       });
+
+      // Scroll reveal
+      var reveals = Array.prototype.slice.call(document.querySelectorAll('.reveal'));
+      if (reduce) {
+        reveals.forEach(function (el) { el.classList.add('is-in'); });
+      } else if ('IntersectionObserver' in window) {
+        var io = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('is-in');
+              io.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.14, rootMargin: '0px 0px -40px 0px' });
+        reveals.forEach(function (el) { io.observe(el); });
+      } else {
+        reveals.forEach(function (el) { el.classList.add('is-in'); });
+      }
+
+      // Header + hero parallax
+      function onScroll() {
+        var y = window.scrollY || 0;
+        if (header) header.classList.toggle('is-scrolled', y > 12);
+        if (!reduce && heroBg) {
+          heroBg.style.transform = 'scale(1.06) translate3d(0,' + (y * 0.12) + 'px,0)';
+        }
+      }
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Gallery spotlight follows pointer
+      if (!reduce && gallery) {
+        gallery.addEventListener('pointermove', function (e) {
+          var r = gallery.getBoundingClientRect();
+          var x = ((e.clientX - r.left) / r.width) * 100;
+          var y = ((e.clientY - r.top) / r.height) * 100;
+          gallery.style.setProperty('--mx', x.toFixed(1) + '%');
+          gallery.style.setProperty('--my', y.toFixed(1) + '%');
+        });
+      }
+
+      // Mild 3D tilt on preview window
+      if (!reduce && stageMain && image) {
+        stageMain.addEventListener('pointermove', function (e) {
+          var r = stageMain.getBoundingClientRect();
+          var px = (e.clientX - r.left) / r.width - 0.5;
+          var py = (e.clientY - r.top) / r.height - 0.5;
+          image.style.transform = 'rotateY(' + (px * 10) + 'deg) rotateX(' + (-py * 8) + 'deg) translateY(-6px)';
+        });
+        stageMain.addEventListener('pointerleave', function () {
+          image.style.transform = '';
+        });
+      }
 
       fetch('version.json', { cache: 'no-store' })
         .then(function (r) { return r.json(); })
