@@ -5,7 +5,7 @@
   "publishedAt": "2026-08-15",
   "notes": "设置页全面升级：状态总览、开发者模式引导、快捷操作；发布 LocaDesk-1.0.7.dmg。",
   "notes_en": "Settings overhaul: status overview, Developer Mode guide, quick actions; ships LocaDesk-1.0.7.dmg.",
-  "downloadURL": "https://github.com/linux503/LocaDesk/releases/latest/download/LocaDesk-1.0.7.dmg",
+  "downloadURL": "https://github.com/linux503/LocaDesk/releases/download/v1.0.7/LocaDesk-1.0.7.dmg",
   "website": "https://linux503.github.io/LocaDesk/",
-  "homepage": "https://github.com/linux503/LocaDesk"
+  "homepage": "https://linux503.github.io/LocaDesk/"
 }
